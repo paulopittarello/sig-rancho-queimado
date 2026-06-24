@@ -98,10 +98,17 @@
 async function iniciar() {
   const mapa = L.map('mapa');
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  const satelite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: 20,
+    attribution: 'Tiles &copy; Esri'
+  });
+
+  const ruas = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 20,
     attribution: '&copy; OpenStreetMap contributors'
-  }).addTo(mapa);
+  });
+
+  satelite.addTo(mapa);
 
   const corPorClasse = {
     "Perene": "#1f6fb2",
@@ -145,17 +152,8 @@ async function iniciar() {
     }
   }).addTo(mapa);
 
-  L.control.layers(null, {
-    "Hidrografia": camadaHidro,
-    "Nascentes": camadaNascentes
-  }, { collapsed: false }).addTo(mapa);
-
-  const limites = camadaHidro.getBounds().extend(camadaNascentes.getBounds());
-  mapa.fitBounds(limites, { padding: [30, 30] });
-}
-
-iniciar();
-</script>
-
-</body>
-</html>
+  L.control.layers({
+    "Satélite": satelite,
+    "Mapa de ruas": ruas
+  }, {
+    "H
